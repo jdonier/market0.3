@@ -1,0 +1,202 @@
+﻿{% extends "markets/base.html" %}
+
+{% block content %}
+
+<script type="text/javascript">
+
+  var timerId = 0;
+  $(document).ready(function() {
+      $.get("/market/1/a/", function(data) {
+		timerId = setTimeout(rt, 5000);	 
+      });
+    $('.refresh').bind('click', function () {
+		clearInterval(timerId);
+		rt.call();	 
+	});		
+   });
+var rt = function refr() {
+  $.get("/market/1/a/", function(data) {
+	$('#time')[0].innerHTML= data.time ;
+	if(data.mwin!=''){
+		$('#win')[0].innerHTML= data.mwin ;
+	}
+	if(data.deposit!=''){
+		$('#deposit')[0].innerHTML= data.deposit ;
+		$('#available')[0].innerHTML= data.available ;
+		$('#risk')[0].innerHTML= data.risk ;
+		$('#bought')[0].innerHTML= data.myBuyVolume + ' at ' + data.avgPriceBuy ;
+		$('#sold')[0].innerHTML= data.mySellVolume + ' at ' + data.avgPriceSell ;
+		var mySellHTML=''
+		var myBuyHTML=''
+		for (var i = 0; i < data.myBuyLimits.length; i++) {
+			myBuyHTML=myBuyHTML+ data.myBuyLimits[i][1] + ' - ' + data.myBuyLimits[i][2]  + '</br>'
+		}
+		for (var i = 0; i < data.mySellLimits.length; i++) {
+			mySellHTML=mySellHTML+ data.mySellLimits[i][1] + ' - ' + data.mySellLimits[i][2] + '</br>'
+		}
+		$('#myBuyLimits')[0].innerHTML= myBuyHTML ;
+		$('#mySellLimits')[0].innerHTML= mySellHTML ;			
+	}
+	$('#tradedVolume')[0].innerHTML= data.tradedVolume ;
+	$('#openInterest')[0].innerHTML= data.openInterest ;
+	var buyHTML=''
+	var sellHTML=''
+	for (var i = 0; i < data.limitsBuy.length; i++) {
+		buyHTML=buyHTML+ data.limitsBuy[i][1] + ' - ' + data.limitsBuy[i][2] + '</br>'
+	}
+	for (var i = 0; i < data.limitsSell.length; i++) {
+		sellHTML=sellHTML+ data.limitsSell[i][1] + ' - ' + data.limitsSell[i][2] + '</br>'
+	}
+	$('#limitsBuy')[0].innerHTML= buyHTML ;
+	$('#limitsSell')[0].innerHTML= sellHTML ;
+	$('#buyVolume')[0].innerHTML= data.buyVolume ;
+	$('#sellVolume')[0].innerHTML= data.sellVolume ;
+	var trades=''
+	for (var i = 0; i < data.trades.length; i++) {
+		trades=trades+ data.trades[i]['timestamp'] + ' - ' + data.trades[i]['price']  + ' - ' + data.trades[i]['volume'] + ' - ' + data.trades[i]['side']+ '</br>'
+	}	
+	$('#histoTrades')[0].innerHTML= trades ;	
+	var options = {
+		series: {
+				   lines: { show: true },
+				   points: { show: true }
+			   }
+	};
+ 
+	$.plot($("#placeholder"),
+				[
+					{
+					data:data.graphData,points:{symbol: "circle"}
+					}
+				],
+				options);
+	  });
+timerId = setTimeout(refr, 5000);
+}
+
+</script>
+
+<table class="market"  summary="Market informations">
+  <tr>
+      <h1>
+        {{market.outcome}}
+      </h1>
+  <div id="market">
+	  <div id="summary">
+	  {{deleted}}
+	  <p> <div id="desc">  </br><a href="{% url 'markets.views.showEvent' market.event.id %}"> {{ market.event.title }}</a>, {{market.event.description}},
+			created by {{market.event.creator}}, {{market.event.dateCreation}} 
+			{% if settled %}
+			Settled : <span id="win">{{mwin}}</span>
+			{% endif %}
+			{% if request.user.is_staff %}
+			<a href="{% url 'markets.views.deleteMarket' market.id %}" >Delete this market</a>
+			{% endif %}
+			</br></br>
+		</div>	
+		<div id="datatrader"> 		
+		{% if request.user.is_authenticated %}
+		 Deposit : <span id="deposit">{{deposit}}</span> &nbsp; &nbsp; &nbsp;  Available :  <span id="available">{{available}}</span> &nbsp; &nbsp; &nbsp;  MinPNL :  <span id="risk">{{risk}}</span></br></br>	
+		 Bought : <span id="bought">{{myBuyVolume}} at {{avgPriceBuy}}</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Sold : <span id="sold">{{mySellVolume}} at {{avgPriceSell}}</span> </br>
+		{% endif %}</br></br>	
+		</div>	
+
+	  <div id="book">
+	  Traded volume : <span id="tradedVolume">{{tradedVolume}}</span>  /  Open interest : <span id="openInterest">{{openInterest}}</span></br></br>
+	  Sell orders (<span id="sellVolume">{{sellVolume}}</span>) :</br>
+	  <div id="limitsSell">
+	  {% for order in limitsSell %}
+	  {{order.price}} - {{order.volume}} </br>
+	  {% endfor %}
+	  </div></br>	
+		
+	  Buy Orders (<span id="buyVolume">{{buyVolume}}</span>) :</br></br>
+	  <div id="limitsBuy">
+	  {% for order in limitsBuy %}
+	  {{order.price}} - {{order.volume}} </br>
+	  {% endfor %}
+	  </div></br>
+	  </div>
+				
+	  </p>
+	  </div>
+	  
+	  <div id="order">
+	  <a class='refresh'> Refresh </a> Last refresh : <span id="time"></span>
+		{% if request.user.is_authenticated %}
+		<div id="neworder">
+		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
+			{{ oform.non_field_errors }}
+			<div class="fieldWrapper">
+				{{ oform.side.errors }}</br>
+				{{ oform.side }}
+			</div>
+			<div class="fieldWrapper">
+				{{ oform.price.errors }}</br>
+				{{ oform.price }}
+			</div>
+			<div class="fieldWrapper">
+				{{ oform.volume.errors }}</br>
+				{{ oform.volume }}
+			</div></br>
+			<p><input class="signup_button round" type="submit" value="Submit" /> </p>
+		</form>
+		</div>
+		<div id="currentorders">
+		<div id="currentbuyorders">
+		My buy limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 1 %}" >cancel all</a></br></br>
+		<div id="myBuyLimits">		
+		{% for limit in myBuyLimits %}
+		{{limit.price}} - {{limit.volume}} - <a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></br>
+		{% endfor %}
+		</div></br>
+		</div>
+		<div id="currentsellorders">
+		My sell limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 0 %}" >cancel all</a></br></br>
+		<div id="mySellLimits">		
+		{% for limit in mySellLimits %}
+		{{limit.price}} - {{limit.volume}}  - <a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></br>
+		{% endfor %}
+		</div></br>
+		</div>
+		</div>
+	</div>
+		{% endif %}
+	  <div id="trades">
+	  <div id="placeholder" style="width:300px;height:200px"></div>
+	  Trades :</br></br>
+	  {% for trade in trades %}
+	  <div id="histoTrades">
+	  {{ trade.timestamp }} - {{trade.price}} - {{trade.volume}} / {{trade.side}} </br>
+	  {% endfor %}
+	 </div> </br>
+	 </div> 
+	 </div> 
+  </tr>
+</table>
+<!-- Javascript -->
+<script type="text/javascript">
+$(document).ready(function(){  
+    var data = {{graphData}};
+ 
+   
+ 
+    var options = {
+        series: {
+                   lines: { show: true },
+                   points: { show: true }
+               }
+    };
+ 
+    $.plot($("#placeholder"),
+                [
+                    {
+                    data:data,points:{symbol: "circle"}
+                    }
+                ],
+                options);
+ 
+});
+</script>
+
+{% endblock %}

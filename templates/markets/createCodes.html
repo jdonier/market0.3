@@ -1,0 +1,26 @@
+﻿{% extends "markets/base.html" %}
+
+{% block content %}
+    <h1>Create Codes</h1>
+
+  <p>
+    
+  <form action="{% url 'markets.views.createCodes' %}" method="post">{% csrf_token %}
+    {{ cdform.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ cdform.nbCodes.errors }}</br>
+        {{ cdform.nbCodes }}
+    </div></br>
+    <p><input class="signup_button round" type="submit" value="Submit" /> </p>
+	{% if request.user.is_superuser %}
+	  <div id="trades">
+		  Active codes :</br></br>
+		  {% for code in codes %}
+		  {{ code.code }}</br>
+		  {% endfor %}</br>
+	{% endif %}	  
+	 </div> 
+</form>
+  </p>
+{% endblock %}
+  
