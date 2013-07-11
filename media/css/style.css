@@ -97,7 +97,7 @@ section #summary{
   position: relative;
   display: inline-block;
   margin-right: 50px;
-  width: 400px;
+  width: 320px;
 }
 
 section #trades{
@@ -120,6 +120,16 @@ section #currentbuyorders{
   position: relative;
   display: inline-block;
   color: #a0a0a0;
+  vertical-align:top;
+}
+section #sell{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+}
+section #buy{
+  position: relative;
+  display: inline-block;
   vertical-align:top;
 }
 section #currentsellorders{
@@ -275,7 +285,24 @@ position: relative;
   font-weight: bold;
 }
 
-
-
+section th {
+	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica,sans-serif;
+	color: #fff;
+    font-size: 90%;
+	letter-spacing: 2px;
+	text-align: center;
+	padding: 1px 12px 1px 12px;
+	background-color: rgba(200,200,200,0.3);
+}
+section td {
+  font-size:80%;
+	text-align: center;
+	background: rgba(100,100,100,0.3);
+	padding: 1px 12px 1px 12px;
+	color: #6D929B;
+}
+section tr:hover { 
+	background: rgba(255,255,255,0.3); 
+}
 
 

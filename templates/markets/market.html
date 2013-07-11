@@ -21,40 +21,44 @@ var rt = function refr() {
 		$('#win')[0].innerHTML= data.mwin ;
 	}
 	if(data.deposit!=''){
-		$('#deposit')[0].innerHTML= data.deposit ;
-		$('#available')[0].innerHTML= data.available ;
-		$('#risk')[0].innerHTML= data.risk ;
-		$('#bought')[0].innerHTML= data.myBuyVolume + ' at ' + data.avgPriceBuy ;
-		$('#sold')[0].innerHTML= data.mySellVolume + ' at ' + data.avgPriceSell ;
-		var mySellHTML=''
-		var myBuyHTML=''
+		var dataTrader='<tbody><tr><th>Deposit</th><th>Available</th><th>PNL min</th></tr>'+ '<tr><td>' + data.deposit + ' </td><td> ' + data.available + ' </td><td> ' + data.risk + '</td></tr></tbody>'
+		$('#dataTrader')[0].innerHTML=dataTrader
+		var dataTrader2='<tbody><tr><th>Bought</th><th>at</th><th>Sold</th><th>at</th></tr>'+ '<tr><td> ' + data.myBuyVolume + ' </td><td>' + data.avgPriceBuy + ' </td><td> ' + data.mySellVolume + ' </td><td> ' + data.avgPriceSell + '</td></tr></tbody>'
+		$('#dataTrader2')[0].innerHTML=dataTrader2
+		var mySellHTML='<tbody><tr><th>price</th><th>volume</th><th>action</th></tr>'
+		var myBuyHTML='<tbody><tr><th>price</th><th>volume</th><th>action</th></tr>'
 		for (var i = 0; i < data.myBuyLimits.length; i++) {
-			myBuyHTML=myBuyHTML+ data.myBuyLimits[i][1] + ' - ' + data.myBuyLimits[i][2]  + '</br>'
+			myBuyHTML=myBuyHTML+ '<tr><td>' + data.myBuyLimits[i][1] + ' </td><td> ' + data.myBuyLimits[i][2] + ' </td><td> ' + '</td></tr>'
 		}
+		myBuyHTML=myBuyHTML+'</tbody>'
 		for (var i = 0; i < data.mySellLimits.length; i++) {
-			mySellHTML=mySellHTML+ data.mySellLimits[i][1] + ' - ' + data.mySellLimits[i][2] + '</br>'
+			mySellHTML=mySellHTML+ '<tr><td>' + data.mySellLimits[i][1] + ' </td><td> ' + data.mySellLimits[i][2]+ ' </td><td> ' + '</td></tr>'
 		}
+		mySellHTML=mySellHTML+'</tbody>'
 		$('#myBuyLimits')[0].innerHTML= myBuyHTML ;
 		$('#mySellLimits')[0].innerHTML= mySellHTML ;			
 	}
-	$('#tradedVolume')[0].innerHTML= data.tradedVolume ;
-	$('#openInterest')[0].innerHTML= data.openInterest ;
-	var buyHTML=''
-	var sellHTML=''
+	var marketData='<tbody><tr><th>Traded volume</th><th>Open interest</th></tr><tr><td> ' + data.tradedVolume + '</td><td>' + data.openInterest + '</td></tr></tbody>'
+	$('#dataMarket')[0].innerHTML= marketData ;
+	var buyHTML='<tbody><tr><th>price</th><th>volume</th></tr>'
+	var sellHTML='<tbody><tr><th>price</th><th>volume</th></tr>'
 	for (var i = 0; i < data.limitsBuy.length; i++) {
-		buyHTML=buyHTML+ data.limitsBuy[i][1] + ' - ' + data.limitsBuy[i][2] + '</br>'
+		buyHTML=buyHTML+'<tr><td>' +  data.limitsBuy[i][1] + ' </td><td> ' + data.limitsBuy[i][2] + '</td></tr>'
 	}
+	buyHTML=buyHTML+'</tbody>'
 	for (var i = 0; i < data.limitsSell.length; i++) {
-		sellHTML=sellHTML+ data.limitsSell[i][1] + ' - ' + data.limitsSell[i][2] + '</br>'
+		sellHTML=sellHTML+ '<tr><td>' + data.limitsSell[i][1] + ' </td><td> ' + data.limitsSell[i][2] + '</td></tr>'
 	}
+	sellHTML=sellHTML+ '</tbody>'
 	$('#limitsBuy')[0].innerHTML= buyHTML ;
 	$('#limitsSell')[0].innerHTML= sellHTML ;
 	$('#buyVolume')[0].innerHTML= data.buyVolume ;
 	$('#sellVolume')[0].innerHTML= data.sellVolume ;
-	var trades=''
+	var trades='<tbody><tr><th>time</th><th>price</th><th>volume</th><th>side</th></tr>'
 	for (var i = 0; i < data.trades.length; i++) {
-		trades=trades+ data.trades[i]['timestamp'] + ' - ' + data.trades[i]['price']  + ' - ' + data.trades[i]['volume'] + ' - ' + data.trades[i]['side']+ '</br>'
+		trades=trades+ '<tr><td>' + data.trades[i]['timestamp'] + ' </td><td> ' + data.trades[i]['price']  + ' </td><td> ' + data.trades[i]['volume'] + ' </td><td> ' + data.trades[i]['side']+ '</td></tr>'
 	}	
+	trades=trades+ '</tbody>'
 	$('#histoTrades')[0].innerHTML= trades ;	
 	var options = {
 		series: {
@@ -76,8 +80,7 @@ timerId = setTimeout(refr, 5000);
 
 </script>
 
-<table class="market"  summary="Market informations">
-  <tr>
+<div class="market"  summary="Market informations">
       <h1>
         {{market.outcome}}
       </h1>
@@ -96,33 +99,59 @@ timerId = setTimeout(refr, 5000);
 		</div>	
 		<div id="datatrader"> 		
 		{% if request.user.is_authenticated %}
-		 Deposit : <span id="deposit">{{deposit}}</span> &nbsp; &nbsp; &nbsp;  Available :  <span id="available">{{available}}</span> &nbsp; &nbsp; &nbsp;  MinPNL :  <span id="risk">{{risk}}</span></br></br>	
-		 Bought : <span id="bought">{{myBuyVolume}} at {{avgPriceBuy}}</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Sold : <span id="sold">{{mySellVolume}} at {{avgPriceSell}}</span> </br>
-		{% endif %}</br></br>	
+			My data :
+			  <table id="dataTrader">
+			  <tbody>
+				<tr><th>Deposit</th><th>Available</th><th>PNL min</th></tr>
+			  <tr><td>{{deposit}} </td><td> {{available}} </td><td> {{risk}} </td></tr>
+			  </tbody>
+			  </table></br>
+			<table id="dataTrader2">
+			  <tbody>
+				<tr><th>Bought</th><th>at</th><th>Sold</th><th>at</th></tr>
+			  <tr><td> {{myBuyVolume}} </td><td>{{avgPriceBuy}} </td><td> {{mySellVolume}}</td><td> {{avgPriceSell}} </td></tr>
+			  </tbody>
+			  </table>
+		{% endif %}</br>	
 		</div>	
 
+	  Market data :
 	  <div id="book">
-	  Traded volume : <span id="tradedVolume">{{tradedVolume}}</span>  /  Open interest : <span id="openInterest">{{openInterest}}</span></br></br>
-	  Sell orders (<span id="sellVolume">{{sellVolume}}</span>) :</br>
-	  <div id="limitsSell">
-	  {% for order in limitsSell %}
-	  {{order.price}} - {{order.volume}} </br>
-	  {% endfor %}
-	  </div></br>	
-		
+		<table id="dataMarket">
+		  <tbody>
+			<tr><th>Traded volume</th><th>Open interest</th></tr>
+		  <tr><td> {{tradedVolume}} </td><td>{{openInterest}} </td></tr>
+		  </tbody>
+		 </table></br>
+	<div id="buy">
 	  Buy Orders (<span id="buyVolume">{{buyVolume}}</span>) :</br></br>
-	  <div id="limitsBuy">
+	  <table id="limitsBuy">
+	  <tbody>
+		<tr><th>price</th><th>volume</th></tr>
 	  {% for order in limitsBuy %}
-	  {{order.price}} - {{order.volume}} </br>
+	  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
 	  {% endfor %}
-	  </div></br>
+	  </tbody>
+	  </table>
+	</div>
+	  <div id="sell">
+	  Sell orders (<span id="sellVolume">{{sellVolume}}</span>) :</br></br>
+	  <table id="limitsSell">
+	  <tbody>
+		<tr><th>price</th><th>volume</th></tr>
+	  {% for order in limitsSell %}
+	  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
+	  {% endfor %}
+	  </tbody>
+	  </table>
+	</div>	
 	  </div>
 				
 	  </p>
 	  </div>
 	  
 	  <div id="order">
-	  <a class='refresh'> Refresh </a> Last refresh : <span id="time"></span>
+	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time"></span>
 		{% if request.user.is_authenticated %}
 		<div id="neworder">
 		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
@@ -145,19 +174,25 @@ timerId = setTimeout(refr, 5000);
 		<div id="currentorders">
 		<div id="currentbuyorders">
 		My buy limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 1 %}" >cancel all</a></br></br>
-		<div id="myBuyLimits">		
+		<table id="myBuyLimits">	
+		<tbody>	
+		<tr><th>price</th><th>volume</th><th>action</th></tr>		
 		{% for limit in myBuyLimits %}
-		{{limit.price}} - {{limit.volume}} - <a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></br>
+		<tr><td> {{limit.price}} </td><td>{{limit.volume}}</td><td><a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></td></tr>
 		{% endfor %}
-		</div></br>
+		</tbody>
+	  </table></br>
 		</div>
 		<div id="currentsellorders">
 		My sell limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 0 %}" >cancel all</a></br></br>
-		<div id="mySellLimits">		
+		<table id="mySellLimits">		
+		<tbody>
+		<tr><th>price</th><th>volume</th><th>action</th></tr>	
 		{% for limit in mySellLimits %}
-		{{limit.price}} - {{limit.volume}}  - <a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></br>
+		<tr><td>{{limit.price}}</td><td>{{limit.volume}}  </td><td><a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></td></tr>
 		{% endfor %}
-		</div></br>
+		</tbody>
+	  </table></br>
 		</div>
 		</div>
 	</div>
@@ -165,15 +200,17 @@ timerId = setTimeout(refr, 5000);
 	  <div id="trades">
 	  <div id="placeholder" style="width:300px;height:200px"></div>
 	  Trades :</br></br>
+	  <table id="histoTrades">
+	  <tbody>
+		<tr><th>time</th><th>price</th><th>volume</th><th>side</th></tr>	
 	  {% for trade in trades %}
-	  <div id="histoTrades">
-	  {{ trade.timestamp }} - {{trade.price}} - {{trade.volume}} / {{trade.side}} </br>
+	  <tr><td>{{ trade.timestamp }} </td><td> {{trade.price}} </td><td> {{trade.volume}} </td><td> {{trade.side}} </td></tr>
 	  {% endfor %}
-	 </div> </br>
+	  </tbody>
+	 </table> </br>
 	 </div> 
 	 </div> 
-  </tr>
-</table>
+</div>
 <!-- Javascript -->
 <script type="text/javascript">
 $(document).ready(function(){  
