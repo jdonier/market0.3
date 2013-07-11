@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 import string, random
+from operator import itemgetter
 from django.db import transaction
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -141,53 +142,61 @@ def showMarket(request, idMarket):
 				return redirect(reverse(showMarket, kwargs={'idMarket':idMarket}))					
 		else:
 			oform = OrderForm()
-		deposit=Decimal(Trader.objects.deposit(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
-		available=Decimal(Trader.objects.availableBalance(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
-		risk=-Decimal(Trader.objects.riskEvent(trader=trader, event=market.event)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+		deposit=float(Decimal(Trader.objects.deposit(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
+		available=float(Decimal(Trader.objects.availableBalance(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
+		risk=-float(Decimal(Trader.objects.riskEvent(trader=trader, event=market.event)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 		myBuyVolume=Trade.objects.filter(Q(market=market) & ((Q(trader1=trader) & Q(side=1)) | (Q(trader2=trader) & Q(side=-1))) & Q(nullTrade=False)).aggregate(Sum('volume'))['volume__sum']		
 		if myBuyVolume==None:
 			myBuyVolume=0
-		myBuyVolume=Decimal(myBuyVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN)	
+		myBuyVolume=float(Decimal(myBuyVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN))	
 		mySellVolume=Trade.objects.filter(Q(market=market) & ((Q(trader1=trader) & Q(side=-1)) | (Q(trader2=trader) & Q(side=1))) & Q(nullTrade=False)).aggregate(Sum('volume'))['volume__sum']		
 		if mySellVolume==None:
 			mySellVolume=0
-		mySellVolume=Decimal(mySellVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN)	
-		avgPriceSell=Decimal(Trader.objects.avgPrice(trader=trader, market=market, side=-1)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
-		avgPriceBuy=Decimal(Trader.objects.avgPrice(trader=trader, market=market, side=1)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+		mySellVolume=float(Decimal(mySellVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN))	
+		avgPriceSell=float(Decimal(Trader.objects.avgPrice(trader=trader, market=market, side=-1)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
+		avgPriceBuy=float(Decimal(Trader.objects.avgPrice(trader=trader, market=market, side=1)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 		myBuyLimits = Limit.objects.filter(market=market, trader=trader, side=1).order_by('-timestamp')
 		mySellLimits = Limit.objects.filter(market=market, trader=trader, side=-1).order_by('-timestamp')
 	else:
 		oform = TradeForm()	
 	cursor.execute("SELECT price price, sum(volume) volume FROM markets_limit WHERE side=1 and market_id=%i GROUP BY price ORDER BY price DESC" % market.id)
 	limitsBuy = dictfetchall(cursor)
-	cursor.execute("SELECT price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price DESC" % market.id)
+	cursor.execute("SELECT price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price ASC" % market.id)
 	limitsSell = dictfetchall(cursor)
 	cursor.execute("SELECT price price, volume volume, side side, timestamp timestamp FROM markets_trade WHERE not nullTrade and market_id=%i ORDER BY timestamp DESC" % market.id)
 	trades = dictfetchall(cursor)
 	trades=trades[:20]
 	graphData=[]
-	i=20
+	i=0
+	for trade in trades:
+		trades[i]['price']=float(trades[i]['price'])
+		trades[i]['volume']=float(trades[i]['volume'])
+		trades[i]['timestamp']=str(trades[i]['timestamp'])
+		i=i+1	
+	price=trades[i-1]['price']	
+	i=20		
 	for trade in trades:
 		i=i-1	
 		graphData.append([i,float(trade['price'])])#[trade['volume'], trade['price']])
 	buyVolume=Limit.objects.filter(market=market, side=1).aggregate(Sum('volume'))['volume__sum']
 	if buyVolume==None:
 		buyVolume=0
-	buyVolume=Decimal(buyVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+	buyVolume=float(Decimal(buyVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 	sellVolume=Limit.objects.filter(market=market, side=-1).aggregate(Sum('volume'))['volume__sum']
 	if sellVolume==None:
 		sellVolume=0
-	sellVolume=Decimal(sellVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+	sellVolume=float(Decimal(sellVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 	tradedVolume=Market.objects.tradedVolume(market=market)
 	if tradedVolume==None:
 		tradedVolume=0
-	tradedVolume=Decimal(tradedVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+	tradedVolume=float(Decimal(tradedVolume).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 	openInterest=Market.objects.openInterest(market=market)
 	if openInterest==None:
 		openInterest=0
-	openInterest=Decimal(openInterest).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+	openInterest=float(Decimal(openInterest).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 	if msgNb==1:
-		oform.non_field_errors="Not enough balance !"	
+		oform.non_field_errors="Not enough balance !"		
+	time = str(datetime.now())	
 	return render(request, 'markets/market.html', locals())
 
 def showMarketb(request, idMarket):
@@ -260,7 +269,7 @@ def showMarketb(request, idMarket):
 	for bl in limitsBuy:
 		lbuy.append([i,float(bl['price']),float(bl['volume']), bl['id']])
 	data['limitsBuy']=lbuy
-	cursor.execute("SELECT id id, price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price DESC" % market.id)
+	cursor.execute("SELECT id id, price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price ASC" % market.id)
 	limitsSell = dictfetchall(cursor)
 	i=0
 	lsell=[]	
@@ -276,12 +285,12 @@ def showMarketb(request, idMarket):
 		i=i-1	
 		graphData.append([i,float(trade['price'])])#[trade['volume'], trade['price']])	
 	data['graphData']=graphData	
-	i=20
+	i=0
 	for trade in trades:
-		i=i-1	
 		trades[i]['price']=float(trades[i]['price'])
 		trades[i]['volume']=float(trades[i]['volume'])
 		trades[i]['timestamp']=str(trades[i]['timestamp'])
+		i=i+1	
 	buyVolume=Limit.objects.filter(market=market, side=1).aggregate(Sum('volume'))['volume__sum']
 	if buyVolume==None:
 		buyVolume=0
@@ -328,6 +337,8 @@ def cancelAll(request, idMarket, idUser, side):
 	return redirect(reverse(showMarket, kwargs={'idMarket':idMarket}))
 	
 def showEvent(request, idEvent, page=1):	
+	from django.db import connection
+	cursor = connection.cursor()
 	form2 = LoginForm()
 	titre="Event"
 	event=Event.objects.get(id=idEvent)
@@ -335,6 +346,17 @@ def showEvent(request, idEvent, page=1):
 	paginator = Paginator(markets, 4)
 	nbMarkets=Market.objects.filter(event=event).aggregate(Count('outcome'))['outcome__count']
 	settled=(event.status==1)
+	eventData=[]
+	for market in markets:
+		cursor.execute("SELECT price price, volume volume, side side, timestamp timestamp FROM markets_trade WHERE not nullTrade and market_id=%i ORDER BY timestamp DESC" % market.id)
+		trades = dictfetchall(cursor)
+		trades=trades[:20]
+		graphData=[]
+		i=20
+		for trade in trades:
+			i=i-1
+			graphData.append([i,float(trade['price'])])#[trade['volume'], trade['price']])	
+		eventData.append([market.id, graphData])
 	try:
 		minis = paginator.page(page)
 	except EmptyPage:
@@ -520,7 +542,9 @@ def signin(request):
 			error = True
 	return redirect('markets.views.home')
 
-def home(request):	
+def home(request):		
+	from django.db import connection
+	cursor = connection.cursor()
 	titre="Home"
 	form2 = LoginForm()
 	if request.method == "POST" and request.user.is_authenticated:   
@@ -536,7 +560,40 @@ def home(request):
 		else:	
 			trform = TransferForm()	
 	else:	
-		trform = TransferForm()			
+		trform = TransferForm()
+	marketPerf=[]
+	for market in Market.objects.all():
+		if market.event.status==0 and market.event.globalEvent.dateClose>timezone.now():
+			tv=Market.objects.tradedVolume(market=market)			
+			if tv==None:
+				tv=0
+			tv=float(Decimal(tv).quantize(Decimal('.01'), rounding=ROUND_DOWN))	
+			marketPerf.append([market.id, tv])
+	marketPerf.sort(key=lambda k: (k[1]), reverse=True)
+	marketPerf=marketPerf[0:3]
+	perfData=[]
+	perfName=[]
+	for mp in range(0,3):
+		market=Market.objects.get(id=marketPerf[mp][0])
+		marketId=marketPerf[mp][0]
+		cursor.execute("SELECT price price, volume volume, side side, timestamp timestamp FROM markets_trade WHERE not nullTrade and market_id=%i ORDER BY timestamp DESC" % marketId)
+		trades = dictfetchall(cursor)
+		trades=trades[:20]
+		graphData=[]
+		i=20
+		for trade in trades:
+			i=i-1
+			graphData.append([i,float(trade['price'])])#[trade['volume'], trade['price']])	
+		perfData.append([mp, graphData])
+		if mp==0:
+			n0=market.outcome	
+			id0=market.id		
+		if mp==1:
+			n1=market.outcome
+			id1=market.id				
+		if mp==2:
+			n2=market.outcome
+			id2=market.id				
 	return render(request, 'markets/home.html', locals())
 	
 def createCodes(request):

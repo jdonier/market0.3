@@ -22,14 +22,15 @@
 		{% if settled %}
 			<a href="{% url 'markets.views.unsettleEvent' event.id %}" >Unsettle </a>
 		{% endif %}
-	{% endif %} </br>
+	{% endif %} </br></br>
   {% for market in minis %}
-    <li>
+	<div id="descrMarket">
       <a href="{% url 'markets.views.showMarket' market.id %}">{{ market.outcome }}</a>
 			{% if request.user.is_staff %}
 			 - <a href="{% url 'markets.views.deleteMarket' market.id %}" >Delete</a> 
 			{% endif %}
-    </li>
+	<div id="{{ market.id }}" style="width:300px;height:200px"></div>		
+	</div>	
   {% endfor %}
 </ul>
 
@@ -51,5 +52,34 @@
 
   </tr>
 </table>
+
+<!-- Javascript -->
+<script type="text/javascript">
+$(document).ready(function(){  
+    var data = {{eventData}};
+	var nbMarkets={{nbMarkets}}
+ 
+ for(var i=0;i<nbMarkets;i++){
+ 
+    var options = {
+        series: {
+                   lines: { show: true },
+                   points: { show: true }
+               }
+    };
+ 
+    $.plot($("#" + data[i][0]),
+                [
+                    {
+                    data:data[i][1],points:{symbol: "circle"}
+                    }
+                ],
+                options);
+	}			
+ 
+});
+</script>
+
+
 {% endblock %}
   

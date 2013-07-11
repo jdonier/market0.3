@@ -92,14 +92,18 @@ section #order{
   margin-right: 50px;
   vertical-align:top;
 }
-
+section #deposit{
+  position: relative;
+  display: inline-block;
+  margin-right: 50px;
+  width: 400px;
+}
 section #summary{
   position: relative;
   display: inline-block;
   margin-right: 50px;
-  width: 320px;
+  width: 500px;
 }
-
 section #trades{
   position: relative;
   display: inline-block;
@@ -132,12 +136,37 @@ section #buy{
   display: inline-block;
   vertical-align:top;
 }
+section #descrMarket{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+  text-align: center;
+}
+section #bestMarkets{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+  text-align: center;
+}
 section #currentsellorders{
   position: relative;
   display: inline-block;
   margin-left: 20px;
   color: #a0a0a0;
   vertical-align:top;
+}
+section #placeholder{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+}
+section #price{
+  position: relative;
+  display: inline-block;
+  font-size: 300%;
+  margin-left: 60px;
+  margin-top: 60px;
+  color: white;
 }
 /* Liens */
 

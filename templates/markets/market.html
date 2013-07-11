@@ -6,7 +6,8 @@
 
   var timerId = 0;
   $(document).ready(function() {
-      $.get("/market/1/a/", function(data) {
+	var mid={{market.id}}
+      $.get("/market/" + mid + "/a/", function(data) {
 		timerId = setTimeout(rt, 5000);	 
       });
     $('.refresh').bind('click', function () {
@@ -15,7 +16,8 @@
 	});		
    });
 var rt = function refr() {
-  $.get("/market/1/a/", function(data) {
+var urlmarket="/market/" + {{market.id}} + "/a/"
+  $.get(urlmarket, function(data) {
 	$('#time')[0].innerHTML= data.time ;
 	if(data.mwin!=''){
 		$('#win')[0].innerHTML= data.mwin ;
@@ -28,11 +30,11 @@ var rt = function refr() {
 		var mySellHTML='<tbody><tr><th>price</th><th>volume</th><th>action</th></tr>'
 		var myBuyHTML='<tbody><tr><th>price</th><th>volume</th><th>action</th></tr>'
 		for (var i = 0; i < data.myBuyLimits.length; i++) {
-			myBuyHTML=myBuyHTML+ '<tr><td>' + data.myBuyLimits[i][1] + ' </td><td> ' + data.myBuyLimits[i][2] + ' </td><td> ' + '</td></tr>'
+			myBuyHTML=myBuyHTML+ '<tr><td>' + data.myBuyLimits[i][1] + ' </td><td> ' + data.myBuyLimits[i][2] + ' </td><td><a href="/cancelorder/' + data.myBuyLimits[i][3] + '">cancel</a></td></tr>'
 		}
 		myBuyHTML=myBuyHTML+'</tbody>'
 		for (var i = 0; i < data.mySellLimits.length; i++) {
-			mySellHTML=mySellHTML+ '<tr><td>' + data.mySellLimits[i][1] + ' </td><td> ' + data.mySellLimits[i][2]+ ' </td><td> ' + '</td></tr>'
+			mySellHTML=mySellHTML+ '<tr><td>' + data.mySellLimits[i][1] + ' </td><td> ' + data.mySellLimits[i][2]+ ' </td><td> ' + '' + '</td></tr>'
 		}
 		mySellHTML=mySellHTML+'</tbody>'
 		$('#myBuyLimits')[0].innerHTML= myBuyHTML ;
@@ -59,7 +61,8 @@ var rt = function refr() {
 		trades=trades+ '<tr><td>' + data.trades[i]['timestamp'] + ' </td><td> ' + data.trades[i]['price']  + ' </td><td> ' + data.trades[i]['volume'] + ' </td><td> ' + data.trades[i]['side']+ '</td></tr>'
 	}	
 	trades=trades+ '</tbody>'
-	$('#histoTrades')[0].innerHTML= trades ;	
+	$('#histoTrades')[0].innerHTML= trades ;
+	$('#price')[0].innerHTML= data.trades[data.trades.length-1]['price'] ;		
 	var options = {
 		series: {
 				   lines: { show: true },
@@ -112,65 +115,16 @@ timerId = setTimeout(refr, 5000);
 			  <tr><td> {{myBuyVolume}} </td><td>{{avgPriceBuy}} </td><td> {{mySellVolume}}</td><td> {{avgPriceSell}} </td></tr>
 			  </tbody>
 			  </table>
-		{% endif %}</br>	
-		</div>	
-
-	  Market data :
-	  <div id="book">
+		{% endif %}</br>
+		Market data :
 		<table id="dataMarket">
 		  <tbody>
 			<tr><th>Traded volume</th><th>Open interest</th></tr>
 		  <tr><td> {{tradedVolume}} </td><td>{{openInterest}} </td></tr>
 		  </tbody>
-		 </table></br>
-	<div id="buy">
-	  Buy Orders (<span id="buyVolume">{{buyVolume}}</span>) :</br></br>
-	  <table id="limitsBuy">
-	  <tbody>
-		<tr><th>price</th><th>volume</th></tr>
-	  {% for order in limitsBuy %}
-	  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
-	  {% endfor %}
-	  </tbody>
-	  </table>
-	</div>
-	  <div id="sell">
-	  Sell orders (<span id="sellVolume">{{sellVolume}}</span>) :</br></br>
-	  <table id="limitsSell">
-	  <tbody>
-		<tr><th>price</th><th>volume</th></tr>
-	  {% for order in limitsSell %}
-	  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
-	  {% endfor %}
-	  </tbody>
-	  </table>
-	</div>	
-	  </div>
-				
-	  </p>
-	  </div>
-	  
-	  <div id="order">
-	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time"></span>
-		{% if request.user.is_authenticated %}
-		<div id="neworder">
-		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
-			{{ oform.non_field_errors }}
-			<div class="fieldWrapper">
-				{{ oform.side.errors }}</br>
-				{{ oform.side }}
-			</div>
-			<div class="fieldWrapper">
-				{{ oform.price.errors }}</br>
-				{{ oform.price }}
-			</div>
-			<div class="fieldWrapper">
-				{{ oform.volume.errors }}</br>
-				{{ oform.volume }}
-			</div></br>
-			<p><input class="signup_button round" type="submit" value="Submit" /> </p>
-		</form>
-		</div>
+		 </table></br>	
+		</div>	
+			
 		<div id="currentorders">
 		<div id="currentbuyorders">
 		My buy limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 1 %}" >cancel all</a></br></br>
@@ -195,11 +149,64 @@ timerId = setTimeout(refr, 5000);
 	  </table></br>
 		</div>
 		</div>
+
+				
+	  </p>
+	  </div>
+	  
+	  <div id="order">
+	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time">{{time}}</span>
+		{% if request.user.is_authenticated %}
+		<div id="neworder">
+		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
+			{{ oform.non_field_errors }}
+			<div class="fieldWrapper">
+				{{ oform.side.errors }}</br>
+				{{ oform.side }}
+			</div>
+			<div class="fieldWrapper">
+				{{ oform.price.errors }}</br>
+				{{ oform.price }}
+			</div>
+			<div class="fieldWrapper">
+				{{ oform.volume.errors }}</br>
+				{{ oform.volume }}
+			</div></br>
+			<p><input class="signup_button round" type="submit" value="Submit" /> </p>
+		</form>
+		</div>
+		
+			  
+	  <div id="book">
+		<div id="buy">
+		  Buy Orders (<span id="buyVolume">{{buyVolume}}</span>) :</br></br>
+		  <table id="limitsBuy">
+		  <tbody>
+			<tr><th>price</th><th>volume</th></tr>
+		  {% for order in limitsBuy %}
+		  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
+		  {% endfor %}
+		  </tbody>
+		  </table>
+		</div>
+		  <div id="sell">
+		  Sell orders (<span id="sellVolume">{{sellVolume}}</span>) :</br></br>
+		  <table id="limitsSell">
+		  <tbody>
+			<tr><th>price</th><th>volume</th></tr>
+		  {% for order in limitsSell %}
+		  <tr><td>{{order.price}} </td><td> {{order.volume}} </td></tr>
+		  {% endfor %}
+		  </tbody>
+		  </table>
+		</div>	
+	  </div>
+	
 	</div>
 		{% endif %}
 	  <div id="trades">
-	  <div id="placeholder" style="width:300px;height:200px"></div>
-	  Trades :</br></br>
+	  <div id="placeholder" style="width:300px;height:200px"></div><div id="price">{{price}}</div>
+	  <div>
 	  <table id="histoTrades">
 	  <tbody>
 		<tr><th>time</th><th>price</th><th>volume</th><th>side</th></tr>	
@@ -208,6 +215,7 @@ timerId = setTimeout(refr, 5000);
 	  {% endfor %}
 	  </tbody>
 	 </table> </br>
+	 </div> 
 	 </div> 
 	 </div> 
 </div>

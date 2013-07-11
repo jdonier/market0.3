@@ -5,7 +5,7 @@
 
   <p>
     Welcome!</br>
-	
+	<div id="deposit">
 	{% if request.user.is_authenticated %}
 	<form action="{% url 'markets.views.home' %}" method="post">{% csrf_token %}
     {{ trform.non_field_errors }}
@@ -19,8 +19,47 @@
     </div></br>
     <p><input class="signup_button round" type="submit" value="Submit" /> </p>
 </form>
+</div>
+<div id="bestMarkets">
+Most active markets :</br></br>
+<div id="descrMarket">
+<a href="{% url 'markets.views.showMarket' id0 %}" >{{n0}}</a>
+<div id="0" style="width:300px;height:200px"></div>
+</div>
+<div id="descrMarket">
+<a href="{% url 'markets.views.showMarket' id1 %}" >{{n1}}</a>
+<div id="1" style="width:300px;height:200px"></div>
+</div>
+<div id="descrMarket">
+<a href="{% url 'markets.views.showMarket' id2 %}" >{{n2}}</a>
+<div id="2" style="width:300px;height:200px"></div>
+</div>
+</div>
 {% endif %}	
 
   </p>
+  
+  <script type="text/javascript">
+$(document).ready(function(){  
+  var data = {{perfData}};
+ for(var i=0;i<3;i++){
+    var options = {
+        series: {
+                   lines: { show: true },
+                   points: { show: true }
+               }
+    };
+ 
+    $.plot($("#" + data[i][0]),
+                [
+                    {
+                    data:data[i][1],points:{symbol: "circle"}
+                    }
+                ],
+                options);
+	}	
+});
+</script>
+  
 {% endblock %}
   
