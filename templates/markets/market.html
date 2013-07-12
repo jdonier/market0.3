@@ -34,7 +34,7 @@ var urlmarket="/market/" + {{market.id}} + "/a/"
 		}
 		myBuyHTML=myBuyHTML+'</tbody>'
 		for (var i = 0; i < data.mySellLimits.length; i++) {
-			mySellHTML=mySellHTML+ '<tr><td>' + data.mySellLimits[i][1] + ' </td><td> ' + data.mySellLimits[i][2]+ ' </td><td> ' + '' + '</td></tr>'
+			mySellHTML=mySellHTML+ '<tr><td>' + data.mySellLimits[i][1] + ' </td><td> ' + data.mySellLimits[i][2]+ ' </td><td><a href="/cancelorder/' + data.mySellLimits[i][3] + '">cancel</a></tr>'
 		}
 		mySellHTML=mySellHTML+'</tbody>'
 		$('#myBuyLimits')[0].innerHTML= myBuyHTML ;
@@ -101,8 +101,9 @@ timerId = setTimeout(refr, 5000);
 			</br></br>
 		</div>	
 		<div id="datatrader"> 		
-		{% if request.user.is_authenticated %}
 			My data :
+			
+		{% if request.user.is_authenticated %}
 			  <table id="dataTrader">
 			  <tbody>
 				<tr><th>Deposit</th><th>Available</th><th>PNL min</th></tr>
@@ -113,6 +114,18 @@ timerId = setTimeout(refr, 5000);
 			  <tbody>
 				<tr><th>Bought</th><th>at</th><th>Sold</th><th>at</th></tr>
 			  <tr><td> {{myBuyVolume}} </td><td>{{avgPriceBuy}} </td><td> {{mySellVolume}}</td><td> {{avgPriceSell}} </td></tr>
+			  </tbody>
+			  </table>
+		{%else%}
+			<table id="dataTraderNA">
+			  <tbody>
+				<tr><th>Deposit</th><th>Available</th><th>PNL min</th></tr>
+			  <tr><td> 0 </td><td> 0 </td><td> 0 </td></tr>
+			  </tbody>
+			  </table></br>
+			<table id="dataTrader2NA">
+			  <tbody>
+				<tr><th>Bought</th><th>at</th><th>Sold</th><th>at</th></tr>
 			  </tbody>
 			  </table>
 		{% endif %}</br>
@@ -127,24 +140,28 @@ timerId = setTimeout(refr, 5000);
 			
 		<div id="currentorders">
 		<div id="currentbuyorders">
-		My buy limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 1 %}" >cancel all</a></br></br>
+		My buy limit orders :</br>{% if request.user.is_authenticated %}<a href="{% url 'markets.views.cancelAll' market.id idUser 1 %}" >cancel all</a>{% endif %}</br></br>
 		<table id="myBuyLimits">	
 		<tbody>	
-		<tr><th>price</th><th>volume</th><th>action</th></tr>		
+		<tr><th>price</th><th>volume</th><th>action</th></tr>	
+		{% if request.user.is_authenticated %}	
 		{% for limit in myBuyLimits %}
 		<tr><td> {{limit.price}} </td><td>{{limit.volume}}</td><td><a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></td></tr>
 		{% endfor %}
+		{% endif %}
 		</tbody>
 	  </table></br>
 		</div>
 		<div id="currentsellorders">
-		My sell limit orders :</br><a href="{% url 'markets.views.cancelAll' market.id idUser 0 %}" >cancel all</a></br></br>
+		My sell limit orders :</br>{% if request.user.is_authenticated %}<a href="{% url 'markets.views.cancelAll' market.id idUser 0 %}" >cancel all</a>{% endif %}</br></br>
 		<table id="mySellLimits">		
 		<tbody>
 		<tr><th>price</th><th>volume</th><th>action</th></tr>	
+		{% if request.user.is_authenticated %}	
 		{% for limit in mySellLimits %}
 		<tr><td>{{limit.price}}</td><td>{{limit.volume}}  </td><td><a href="{% url 'markets.views.cancelOrder' limit.id %}" >cancel</a></td></tr>
 		{% endfor %}
+		{% endif %}
 		</tbody>
 	  </table></br>
 		</div>
@@ -155,11 +172,10 @@ timerId = setTimeout(refr, 5000);
 	  </div>
 	  
 	  <div id="order">
-	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time">{{time}}</span>
-		{% if request.user.is_authenticated %}
+	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time">{{time}}</span></br></br>
 		<div id="neworder">
 		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
-			{{ oform.non_field_errors }}
+			{{oform.non_field_errors}}
 			<div class="fieldWrapper">
 				{{ oform.side.errors }}</br>
 				{{ oform.side }}
@@ -203,7 +219,6 @@ timerId = setTimeout(refr, 5000);
 	  </div>
 	
 	</div>
-		{% endif %}
 	  <div id="trades">
 	  <div id="placeholder" style="width:300px;height:200px"></div><div id="price">{{price}}</div>
 	  <div>

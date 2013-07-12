@@ -121,7 +121,7 @@ def showMarket(request, idMarket):
 		if market.win==True:
 			mwin='Won'
 	trader=Trader()
-	if request.user.is_authenticated:
+	if request.user.is_authenticated():
 		trader=Trader.objects.get(user=request.user)
 		idUser=trader.user.id
 		if request.method == 'POST' and trader.active==True and event.status==0 and event.globalEvent.dateClose>timezone.now():
@@ -133,13 +133,14 @@ def showMarket(request, idMarket):
 				if Trader.objects.availableBalanceIf(trader=trader, newIdMarket=market.id, newSide=side, newPrice=price, newVolume=volume)>=0:
 					try:
 						deleted=execute(market, trader, side, price, volume)
+						if deleted==True:
+							oform.non_field_errors="Not enough balance !"	
+						else:					
+							return redirect(reverse(showMarket, kwargs={'idMarket':idMarket}))		
 					except:
-						msgNb=1
-						err=True
+						oform.non_field_errors="Order not submitted"	
 				else:
-					msgNb=1
-					err=True
-				return redirect(reverse(showMarket, kwargs={'idMarket':idMarket}))					
+					oform.non_field_errors="Not enough balance !"	
 		else:
 			oform = OrderForm()
 		deposit=float(Decimal(Trader.objects.deposit(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
@@ -158,7 +159,7 @@ def showMarket(request, idMarket):
 		myBuyLimits = Limit.objects.filter(market=market, trader=trader, side=1).order_by('-timestamp')
 		mySellLimits = Limit.objects.filter(market=market, trader=trader, side=-1).order_by('-timestamp')
 	else:
-		oform = TradeForm()	
+		oform = OrderForm()	
 	cursor.execute("SELECT price price, sum(volume) volume FROM markets_limit WHERE side=1 and market_id=%i GROUP BY price ORDER BY price DESC" % market.id)
 	limitsBuy = dictfetchall(cursor)
 	cursor.execute("SELECT price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price ASC" % market.id)
@@ -172,8 +173,11 @@ def showMarket(request, idMarket):
 		trades[i]['price']=float(trades[i]['price'])
 		trades[i]['volume']=float(trades[i]['volume'])
 		trades[i]['timestamp']=str(trades[i]['timestamp'])
-		i=i+1	
-	price=trades[i-1]['price']	
+		i=i+1
+	if i>0:
+		price=trades[i-1]['price']	
+	else:
+		price=0
 	i=20		
 	for trade in trades:
 		i=i-1	
@@ -194,21 +198,16 @@ def showMarket(request, idMarket):
 	if openInterest==None:
 		openInterest=0
 	openInterest=float(Decimal(openInterest).quantize(Decimal('.01'), rounding=ROUND_DOWN))
-	if msgNb==1:
-		oform.non_field_errors="Not enough balance !"		
 	time = str(datetime.now())	
 	return render(request, 'markets/market.html', locals())
 
 def showMarketb(request, idMarket):
 	from django.db import connection
 	cursor = connection.cursor()
-	form2 = LoginForm()
 	titre="Market"
 	deleted=''
 	market=Market.objects.get(id=idMarket)
 	event=market.event
-	msgNb=0
-	err=False
 	settled=False
 	data={}
 	data['mwin']=''
@@ -227,10 +226,9 @@ def showMarketb(request, idMarket):
 		if market.win==True:
 			data['mwin'] = 'Won'
 	trader=Trader()
-	if request.user.is_authenticated:
+	if request.user.is_authenticated():
 		trader=Trader.objects.get(user=request.user)
 		idUser=trader.user.id
-		oform = OrderForm()
 		data['deposit']=float(Decimal(Trader.objects.deposit(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 		data['available']=float(Decimal(Trader.objects.availableBalance(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
 		data['risk']=-float(Decimal(Trader.objects.riskEvent(trader=trader, event=market.event)).quantize(Decimal('.01'), rounding=ROUND_DOWN))
@@ -260,8 +258,6 @@ def showMarketb(request, idMarket):
 		for sl in mySellLimits:
 			msl.append([i,float(sl['price']),float(sl['volume']), sl['id']])
 		data['mySellLimits']=msl
-	else:
-		oform = TradeForm()	
 	cursor.execute("SELECT id id, price price, sum(volume) volume FROM markets_limit WHERE side=1 and market_id=%i GROUP BY price ORDER BY price DESC" % market.id)
 	limitsBuy = dictfetchall(cursor)
 	i=0
@@ -291,6 +287,10 @@ def showMarketb(request, idMarket):
 		trades[i]['volume']=float(trades[i]['volume'])
 		trades[i]['timestamp']=str(trades[i]['timestamp'])
 		i=i+1	
+	if i>0:
+		data['price']=trades[i-1]['price']	
+	else:
+		data['price']=0
 	buyVolume=Limit.objects.filter(market=market, side=1).aggregate(Sum('volume'))['volume__sum']
 	if buyVolume==None:
 		buyVolume=0
@@ -547,7 +547,7 @@ def home(request):
 	cursor = connection.cursor()
 	titre="Home"
 	form2 = LoginForm()
-	if request.method == "POST" and request.user.is_authenticated:   
+	if request.method == "POST" and request.user.is_authenticated():   
 		trform = TransferForm(request.POST)
 		if trform.is_valid():
 			transfer=Transfer()
@@ -703,10 +703,11 @@ def execute(market, trader, side, price, volume):
 				trade.delete()
 			
 	#Crée un limit order sur ce qui reste	
-	deleted=''
+	deleted=False
 	if volToExec>0:
 		limit=Limit(market=market, trader=trader, side=side, price=price, volume=volToExec)
 		limit.save()
 		if Trader.objects.availableBalance(trader=trader)<0:
 			limit.delete()
-			return 'deleted'
+			deleted=True
+	return deleted
