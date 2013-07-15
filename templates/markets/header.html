@@ -4,27 +4,30 @@
 <h1>BD&T Corp</h1>
 
 
-<nav class="round">
+<!-- <nav class="round"> -->
 {% if request.user.is_authenticated %}
 
 <a class="signin_button" href=" {% url 'markets.views.signout' %}" >Logout</a>
  
  {% else%}
-
+<div id="signin">
   <form action="{% url 'markets.views.signin' %}" method="post">{% csrf_token %}
     {{ form2.non_field_errors }}
     
  <ul>
 	<li class="fieldWrapper"> {{ form2.username.errors }}{{ form2.username }}</br>Keep me logged in &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </li>
     <li class="fieldWrapper">{{ form2.password.errors }} {{ form2.password }}</br> Forgotten your password?</li>
-    </ul>
-<input class="signin_button" type="submit" value="Log in" /> 
+    <li><input class="signin_button" type="submit" value="Log in" /> </li>
+</ul>
 </form>
-
-  </nav> 
+</div>
+<div id="signup">
  <form action="{% url 'markets.views.signup' %}" method="get">{% csrf_token %}
   <input class="signup_button2" type="submit" value="Register" /> 
 </form> 
+</div>
+
+ <!--  </nav>  -->
 {% endif%} 
  
 </header>

@@ -6,7 +6,10 @@
       <h1>
         {{ gEvent.title }} {% if request.user.is_staff %}  - <a href="{% url 'markets.views.deleteGlobalEvent' gEvent.id %}" >Delete</a> {% endif %}
       </h1>
-	
+<div id="eventsGE">	
+	  <div id="divHead">
+	  Events
+	  </div>
     <ul class="users">
   {% for event in minis %}
     <li>
@@ -30,7 +33,7 @@
        {% endif %}
     </span>
 </div>
-
+</div>
   </tr>
 </table>
 {% endblock %}

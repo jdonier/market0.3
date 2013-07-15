@@ -4,9 +4,11 @@
     <h1>Home</h1>
 
   <p>
-    Welcome!</br>
 	{% if request.user.is_authenticated %}
 	<div id="deposit">
+	<div id="divHead">
+		Transfers :
+	  </div>
 	<form action="{% url 'markets.views.home' %}" method="post">{% csrf_token %}
     {{ trform.non_field_errors }}
     <div class="fieldWrapper">
@@ -21,8 +23,11 @@
 </form>
 </div>
 {% endif %}	
-<div id="bestMarkets">
-Most active markets :</br></br>
+<div id="bestMarkets"> 
+	  <div id="divHead">
+		Most active markets :
+	  </div>
+</br></br>
 <div id="descrMarket">
 <a href="{% url 'markets.views.showMarket' id0 %}" >{{n0}}</a>
 <div id="0" style="width:300px;height:200px"></div>

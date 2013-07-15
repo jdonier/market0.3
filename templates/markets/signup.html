@@ -4,7 +4,10 @@
     <h1>Sign Up</h1>
 
   <p>
-    
+    <div id="signup">
+	  <div id="divHead">
+	  Sign up now !
+	  </div>
   <form action="{% url 'markets.views.signup' %}" method="post">{% csrf_token %}
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
@@ -25,6 +28,7 @@
     </div></br>
     <p><input class="signup_button round" type="submit" value="Submit" /> </p>
 </form>
+</div>
   </p>
 {% endblock %}
   

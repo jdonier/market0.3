@@ -127,20 +127,28 @@ def showMarket(request, idMarket):
 		if request.method == 'POST' and trader.active==True and event.status==0 and event.globalEvent.dateClose>timezone.now():
 			oform = OrderForm(request.POST)
 			if oform.is_valid():
-				volume=oform.cleaned_data['volume']
-				price=oform.cleaned_data['price']
-				side=int(oform.cleaned_data['side'])
-				if Trader.objects.availableBalanceIf(trader=trader, newIdMarket=market.id, newSide=side, newPrice=price, newVolume=volume)>=0:
-					try:
-						deleted=execute(market, trader, side, price, volume)
-						if deleted==True:
-							oform.non_field_errors="Not enough balance !"	
-						else:					
-							return redirect(reverse(showMarket, kwargs={'idMarket':idMarket}))		
-					except:
-						oform.non_field_errors="Order not submitted"	
+				if 'buyOrder' in request.POST:
+					volume=oform.cleaned_data['bvolume']
+					price=oform.cleaned_data['bprice']
+					side=1	
 				else:
-					oform.non_field_errors="Not enough balance !"	
+					volume=oform.cleaned_data['svolume']
+					price=oform.cleaned_data['sprice']
+					side=-1	
+				if volume==None or price==None:
+					oform.non_field_errors="Empty Fields !"
+				else:	
+					if Trader.objects.availableBalanceIf(trader=trader, newIdMarket=market.id, newSide=side, newPrice=price, newVolume=volume)>=0:
+						try:
+							deleted=execute(market, trader, side, price, volume)
+							if deleted==True:
+								oform.non_field_errors="Not enough balance !"	
+							#else:					
+							#	return redirect(reverse(showMarket, kwargs={'idMarket':idMarket, 'sd':0, 'isPost':1}))		
+						except:
+							oform.non_field_errors="Order not submitted"	
+					else:
+						oform.non_field_errors="Not enough balance !"	
 		else:
 			oform = OrderForm()
 		deposit=float(Decimal(Trader.objects.deposit(trader=trader)).quantize(Decimal('.01'), rounding=ROUND_DOWN))

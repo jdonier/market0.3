@@ -29,9 +29,11 @@ class MarketForm(forms.Form):
 	#		self.fields['outcome_%i' % i] = forms.CharField(label="Outcome", max_length=255, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Outcome'}))
 			
 class OrderForm(forms.Form):
-    side = forms.ChoiceField(label="Type", choices=((1, "Buy"), (-1, "Sell")))
-    price = forms.DecimalField(label="Price", max_digits=4, decimal_places=4, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Price - Ex : 0.4020'}))
-    volume = forms.DecimalField(label="Volume", widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Volume - Ex : 1.5'}))
+    #side = forms.ChoiceField(label="Type", choices=((1, "Buy"), (-1, "Sell")))
+	bprice = forms.DecimalField(label="Buy Price",required=False, max_digits=4, decimal_places=4, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Price - Ex : 0.4020', 'style': 'width:150px'}))
+	bvolume = forms.DecimalField(label="Buy Volume", required=False, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Volume - Ex : 1.5', 'style': 'width:150px'}))
+	sprice = forms.DecimalField(label="Sell Price", required=False, max_digits=4, decimal_places=4, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Price - Ex : 0.8730', 'style': 'width:150px'}))
+	svolume = forms.DecimalField(label="Sell Volume", required=False, widget=forms.TextInput(attrs={'class': 'formField', 'placeholder': 'Volume - Ex : 1.5', 'style': 'width:150px'}))
  
 class TransferForm(forms.Form):
     type = forms.ChoiceField(label="Type", choices=((1, "Deposit"), (-1, "Withdraw")))

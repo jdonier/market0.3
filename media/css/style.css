@@ -40,38 +40,36 @@ body {
 
 
 header {
-  position: fixed;
+  position: relative;
   margin: 0 auto;
   margin-top: -40px;
   height : 60px;
   width: 100%;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(240,240,240,1);
 }
 
 
 header img {
   padding: 0em;
-  background: #330000;
+  /* background: #330000; */
 }
 
 section {
   position: relative;
-  margin-left: 40px;
-  margin-top: 40px;
-  margin-right: 40px;
+  margin-left: 0;
+  margin-top: 1;
+  margin-right: 0;
   font-size: 120%;
   padding: 20px;
-  background-color: rgba(0,0,0,0.7);
-  color: white;
+  background-color: white;
+  color: black;
 }
 
 footer{
-  position:fixed;
-  bottom:0;
+  position:relative;
   width:100%;
   height : 40px;
-  background-color: #000000;
-  opacity:0.7;
+  background-color: rgba(240,240,240,1);
 }
 
 
@@ -89,41 +87,59 @@ section #market{
 section #order{
   position: relative;
   display: inline-block;
-  margin-right: 50px;
+  margin-right: 20px;
   vertical-align:top;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
 }
 section #deposit{
   position: relative;
   display: inline-block;
+  background-color: rgba(240,240,240,1);
   margin-right: 50px;
   width: 400px;
+  padding: 20;
+}
+section #signup{
+  position: relative;
+  display: inline-block;
+  background-color: rgba(240,240,240,1);
+  margin-right: 50px;
+  width: 400px;
+  padding: 20;
 }
 section #summary{
   position: relative;
   display: inline-block;
-  margin-right: 50px;
+  margin-right: 20px;
   width: 500px;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
 }
 section #trades{
   position: relative;
   display: inline-block;
-  color: #a0a0a0;
+  color: black;
   vertical-align:top;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
 }
 
 section #book{
-  color: #a0a0a0;
+  color: black;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
 }
 section #datatrader{
   font-weight: bold;
 }
 section #desc{
-  color: #a0a0a0;
+  color: black;
 }
 section #currentbuyorders{
   position: relative;
   display: inline-block;
-  color: #a0a0a0;
+  color: black;
   vertical-align:top;
 }
 section #sell{
@@ -142,17 +158,34 @@ section #descrMarket{
   vertical-align:top;
   text-align: center;
 }
+section #descrEvent{
+  color: black;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
+}
+section #eventsGE{
+  color: black;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
+}
+section #graphsEvent{
+  color: black;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
+}
 section #bestMarkets{
   position: relative;
   display: inline-block;
   vertical-align:top;
   text-align: center;
+  background-color: rgba(240,240,240,1);
+  padding: 20;
 }
 section #currentsellorders{
   position: relative;
   display: inline-block;
   margin-left: 20px;
-  color: #a0a0a0;
+  color: black;
   vertical-align:top;
 }
 section #placeholder{
@@ -160,18 +193,63 @@ section #placeholder{
   display: inline-block;
   vertical-align:top;
 }
+header #signin{
+  position: relative;
+  float: right;
+  margin-top: -20;
+  margin-right: 50;
+  display: inline-block;
+}
+header #signin ul li {
+  list-style-type: none;
+  display: inline-block;
+  padding: 0.1em;
+  margin: 0px;
+}
+header #signin  {
+  white-space: nowrap;
+  font-size: 10px;
+  font-family: Georgia;
+  color:black;
+}
+header #signup{
+  position: relative;
+  float: right;
+  display: inline-block;
+  margin-right: 10;
+  margin-top: -20;
+}
+section .formBuy{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+}
+section .formSell{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+}
+
+section #divHead{
+background-color: rgb(200,200,200);
+margin-top: -20;
+margin-left: -20;
+margin-right: -20;
+margin-bottom: 5;
+}
+
 section #price{
   position: relative;
   display: inline-block;
   font-size: 300%;
   margin-left: 60px;
   margin-top: 60px;
-  color: white;
+  color: black;
 }
 /* Liens */
 
 a {
-  color: white;
+  color: black;
   text-decoration: none;
 }
 
@@ -198,28 +276,17 @@ width:120px;
 /* Navigation */
 
 header h1{
-color:rgba(255,255,255, 0.7);
-}
-
-header nav {
-  position: absolute;
-bottom: 0px;
-right: 0px;
-  white-space: nowrap;
-  font-size: 10px;
-  font-family: Georgia;
-  color:rgba(255,255,255, 0.7);;
+color:black;
 }
 
 footer nav {
-position: absolute;
-bottom: 0px;
-right: 0px;
-  background-color: #000000;
+  position: absolute;
+  bottom: 0px;
+ right: 0px;
   white-space: nowrap;
   font-size: 12px;
   font-family: Georgia;
-  color: white;
+  color: black;
 }
 
 nav {
@@ -241,7 +308,7 @@ header nav ul {
 position:relative;
 bottom:5px;
   margin-right:120px;
-  margin-bottom: -40px;
+  margin-bottom: 0px;
 }
 
 nav ul li {
@@ -259,7 +326,7 @@ footer nav ul li {
 }
 
 nav ul li a {
-  color: white;
+  color: black;
   font-weight: bold;
 }
 
@@ -288,9 +355,6 @@ input.signup_button {
 
 input.signup_button2 {
 position: relative;
-	float: right;
-	margin-bottom: 20px;
-	margin-right: 400px;
   text-align: center;
   width: 50px;
   height: 25px;
@@ -300,12 +364,12 @@ position: relative;
   font-weight: bold;
 }
 
-input.signin_button {
-position: relative;
-	float: right;
-	margin-bottom: 20px;
-	margin-right: 40px;
+.signin_button {
   text-align: center;
+  position: relative;
+  display: inline-block;
+  float: right;
+  margin-top: -20;
   width: 50px;
   height: 25px;
   color: white;
@@ -316,22 +380,22 @@ position: relative;
 
 section th {
 	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica,sans-serif;
-	color: #fff;
+	color: black;
     font-size: 90%;
 	letter-spacing: 2px;
 	text-align: center;
 	padding: 1px 12px 1px 12px;
-	background-color: rgba(200,200,200,0.3);
+	background-color: rgb(180,180,180);
 }
-section td {
+section tr {
   font-size:80%;
 	text-align: center;
-	background: rgba(100,100,100,0.3);
+	background-color: rgb(200,200,200);
 	padding: 1px 12px 1px 12px;
-	color: #6D929B;
+	color: black;
 }
 section tr:hover { 
-	background: rgba(255,255,255,0.3); 
+	background-color: white; 
 }
 
 

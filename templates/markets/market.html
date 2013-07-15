@@ -89,6 +89,9 @@ timerId = setTimeout(refr, 5000);
       </h1>
   <div id="market">
 	  <div id="summary">
+	  <div id="divHead">
+	  My informations 
+	  </div>
 	  {{deleted}}
 	  <p> <div id="desc">  </br><a href="{% url 'markets.views.showEvent' market.event.id %}"> {{ market.event.title }}</a>, {{market.event.description}},
 			created by {{market.event.creator}}, {{market.event.dateCreation}} 
@@ -172,27 +175,38 @@ timerId = setTimeout(refr, 5000);
 	  </div>
 	  
 	  <div id="order">
+	  <div id="divHead">
+	  Order Book
+	  </div>
 	  <a class='refresh'> Refresh </a> </br>Last refresh : <span id="time">{{time}}</span></br></br>
 		<div id="neworder">
 		<form action="{% url 'markets.views.showMarket' market.id %}" method="post">{% csrf_token %}
 			{{oform.non_field_errors}}
-			<div class="fieldWrapper">
-				{{ oform.side.errors }}</br>
-				{{ oform.side }}
+			<div class="formBuy">
+			<div class="fieldWrapperBuy">
+				{{ oform.bprice.errors }}</br>
+				{{ oform.bprice }}
 			</div>
-			<div class="fieldWrapper">
-				{{ oform.price.errors }}</br>
-				{{ oform.price }}
-			</div>
-			<div class="fieldWrapper">
-				{{ oform.volume.errors }}</br>
-				{{ oform.volume }}
+			<div class="fieldWrapperBuy">
+				{{ oform.bvolume.errors }}</br>
+				{{ oform.bvolume }}
 			</div></br>
-			<p><input class="signup_button round" type="submit" value="Submit" /> </p>
+			<input class="signup_button round" type="submit" name="buyOrder" value="Buy !" />
+			</div>
+			<div class="formSell">
+			<div class="fieldWrapperSell">
+				{{ oform.sprice.errors }}</br>
+				{{ oform.sprice }}
+			</div>
+			<div class="fieldWrapperSell">
+				{{ oform.svolume.errors }}</br>
+				{{ oform.svolume }}
+			</div></br>
+			<input class="signup_button round" type="submit" name="sellOrder" value="Sell !" /> 
+			</div>
 		</form>
 		</div>
 		
-			  
 	  <div id="book">
 		<div id="buy">
 		  Buy Orders (<span id="buyVolume">{{buyVolume}}</span>) :</br></br>
@@ -220,6 +234,9 @@ timerId = setTimeout(refr, 5000);
 	
 	</div>
 	  <div id="trades">
+	  <div id="divHead">
+	  Market history
+	  </div>
 	  <div id="placeholder" style="width:300px;height:200px"></div><div id="price">{{price}}</div>
 	  <div>
 	  <table id="histoTrades">

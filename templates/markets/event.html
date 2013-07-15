@@ -6,8 +6,10 @@
       <h1>
         {{ event.title }} 
       </h1>
-	
-    <ul class="users">
+	<div id="descrEvent">
+	  <div id="divHead">
+	  Event description
+	  </div>
 	 from <a href="{% url 'markets.views.showGlobalEvent' event.globalEvent.id %}"> {{ event.globalEvent.title }}</a> </br>
 	 {% if request.user.is_staff %} 
 		<a href="{% url 'markets.views.deleteEvent' event.id %}" >Delete</a> 
@@ -22,7 +24,13 @@
 		{% if settled %}
 			<a href="{% url 'markets.views.unsettleEvent' event.id %}" >Unsettle </a>
 		{% endif %}
-	{% endif %} </br></br>
+	{% endif %}
+	</div>
+	</br></br>
+	<div id="graphsEvent">
+	  <div id="divHead">
+	  Markets
+	  </div>
   {% for market in minis %}
 	<div id="descrMarket">
       <a href="{% url 'markets.views.showMarket' market.id %}">{{ market.outcome }}</a>
@@ -32,7 +40,7 @@
 	<div id="{{ market.id }}" style="width:300px;height:200px"></div>		
 	</div>	
   {% endfor %}
-</ul>
+  </div>
 
 <div class="pagination">
     <span class="step-links">
