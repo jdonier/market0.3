@@ -271,14 +271,14 @@ def showMarketb(request, idMarket):
 	i=0
 	lbuy=[]	
 	for bl in limitsBuy:
-		lbuy.append([i,float(bl['price']),float(bl['volume']), bl['id']])
+		lbuy.append([i,float(bl['price']),float(Decimal(bl['volume']).quantize(Decimal('.0001'), rounding=ROUND_DOWN)), bl['id']])
 	data['limitsBuy']=lbuy
 	cursor.execute("SELECT id id, price price, sum(volume) volume FROM markets_limit WHERE side=-1 and market_id=%i GROUP BY price ORDER BY price ASC" % market.id)
 	limitsSell = dictfetchall(cursor)
 	i=0
 	lsell=[]	
 	for sl in limitsSell:
-		lsell.append([i,float(sl['price']),float(sl['volume']), sl['id']])
+		lsell.append([i,float(sl['price']),float(Decimal(sl['volume']).quantize(Decimal('.0001'), rounding=ROUND_DOWN)), sl['id']])
 	data['limitsSell']=lsell
 	cursor.execute("SELECT price price, volume volume, side side, timestamp timestamp FROM markets_trade WHERE not nullTrade and market_id=%i ORDER BY timestamp DESC" % market.id)
 	trades = dictfetchall(cursor)

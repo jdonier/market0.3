@@ -92,7 +92,6 @@ timerId = setTimeout(refr, 5000);
 	  <div id="divHead">
 	  My informations 
 	  </div>
-	  {{deleted}}
 	  <p> <div id="desc">  </br><a href="{% url 'markets.views.showEvent' market.event.id %}"> {{ market.event.title }}</a>, {{market.event.description}},
 			created by {{market.event.creator}}, {{market.event.dateCreation}} 
 			{% if settled %}

@@ -45,7 +45,7 @@ header {
   margin-top: -40px;
   height : 60px;
   width: 100%;
-  background-color: rgba(240,240,240,1);
+  background-color:  rgba(245,245,245,1);
 }
 
 
@@ -69,7 +69,7 @@ footer{
   position:relative;
   width:100%;
   height : 40px;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
 }
 
 
@@ -89,13 +89,13 @@ section #order{
   display: inline-block;
   margin-right: 20px;
   vertical-align:top;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #deposit{
   position: relative;
   display: inline-block;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   margin-right: 50px;
   width: 400px;
   padding: 20;
@@ -103,7 +103,7 @@ section #deposit{
 section #signup{
   position: relative;
   display: inline-block;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   margin-right: 50px;
   width: 400px;
   padding: 20;
@@ -113,7 +113,7 @@ section #summary{
   display: inline-block;
   margin-right: 20px;
   width: 500px;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #trades{
@@ -121,13 +121,13 @@ section #trades{
   display: inline-block;
   color: black;
   vertical-align:top;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 
 section #book{
   color: black;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #datatrader{
@@ -160,17 +160,17 @@ section #descrMarket{
 }
 section #descrEvent{
   color: black;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #eventsGE{
   color: black;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #graphsEvent{
   color: black;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #bestMarkets{
@@ -178,7 +178,7 @@ section #bestMarkets{
   display: inline-block;
   vertical-align:top;
   text-align: center;
-  background-color: rgba(240,240,240,1);
+  background-color: rgba(245,245,245,1);
   padding: 20;
 }
 section #currentsellorders{
@@ -192,32 +192,6 @@ section #placeholder{
   position: relative;
   display: inline-block;
   vertical-align:top;
-}
-header #signin{
-  position: relative;
-  float: right;
-  margin-top: -20;
-  margin-right: 50;
-  display: inline-block;
-}
-header #signin ul li {
-  list-style-type: none;
-  display: inline-block;
-  padding: 0.1em;
-  margin: 0px;
-}
-header #signin  {
-  white-space: nowrap;
-  font-size: 10px;
-  font-family: Georgia;
-  color:black;
-}
-header #signup{
-  position: relative;
-  float: right;
-  display: inline-block;
-  margin-right: 10;
-  margin-top: -20;
 }
 section .formBuy{
   position: relative;
@@ -275,68 +249,89 @@ width:120px;
 
 /* Navigation */
 
-header h1{
+
+#corp {
+  position: absolute;
+  display: inline-block;
+  vertical-align: bottom;
+  left:0;
+  margin-top: 20;
 color:black;
 }
 
-footer nav {
+#logs{
   position: absolute;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left:1100px;
+  margin-top: 40px;
   bottom: 0px;
- right: 0px;
+}
+
+#menu {
+  position: absolute;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left:300px;
+  margin-top: 40px;
   white-space: nowrap;
   font-size: 12px;
   font-family: Georgia;
   color: black;
 }
 
-nav {
-  float: right;
-  margin-top: 15px;
-}
 
-
-
-nav ul {
+#menu ul {
 position:relative;
 bottom:5px;
   margin: -10;
-  margin-right:10;
+  margin-right:120px;
+  margin-bottom: 0px;
   padding: 0;
 }
 
-header nav ul {
-position:relative;
-bottom:5px;
-  margin-right:120px;
-  margin-bottom: 0px;
-}
-
-nav ul li {
+#menu ul li {
   list-style-type: none;
-  display: inline-block;
-  padding: 0.1em;
-  margin: -20px;
-}
-
-footer nav ul li {
-  list-style-type: none;
+  position: relative;
   display: inline-block;
   padding: 0.1em;
   margin: 10px;
 }
 
-nav ul li a {
+#menu ul li a {
   color: black;
   font-weight: bold;
 }
 
-nav ul li a:hover {
+#menu ul li a:hover {
   text-decoration: none;
   color: #3399CC;
 }
 
+#signin{
+  position: relative;
+  display: inline-block;
+  margin-top: -40;
+  margin-right: 50;
+  white-space: nowrap;
+  font-size: 10px;
+  font-family: Georgia;
+  color:black;
+}
+#signin ul li {
+  list-style-type: none;
+  display: inline-block;
+  padding: 0.1em;
+  margin: 0px;
+}
+header #signup{
+  position: relative;
+  display: inline-block;
+  float: right;
+  margin-top: -35px;
+}
 
-/* Bouton inscription */
+/* Boutons */
 
 input.signup_button {
   margin-left: auto;
@@ -376,6 +371,16 @@ position: relative;
   background: #3399CC;
   font-size: 90%;
   font-weight: bold;
+}
+
+input.signup_button:hover{
+  color: black;
+}
+input.signup_button2:hover{
+  color: black;
+}
+.signin_button:hover{
+  color: black;
 }
 
 section th {
