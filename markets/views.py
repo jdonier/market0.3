@@ -21,21 +21,9 @@ from django.db.models import Avg, Max, Min, Sum, Count
 from markets.forms import SignupForm, LoginForm, GlobalEventForm, EventForm, MarketForm, OrderForm, TransferForm, CodeForm
 from markets.models import GlobalEvent, Event, Market, Trader, Trade, Limit, OBHistory, Transfer, Code
 from django.utils import simplejson
-
 from django.utils import simplejson
+from markets.getNews import *
 
-def quiz(request):   
-	return render(request, 'markets/test.html', locals())
-
-def quizguess(request, fact_id):   
-	message = {"fact_type": "", "fact_note": ""}
-	if request.is_ajax():
-		fact = get_object_or_404(Market, id=fact_id)
-		message['fact_type'] = fact.outcome
-	else:
-		message = "You're the lying type, I can just tell."
-	json = simplejson.dumps(message)
-	return HttpResponse(json, mimetype='application/json')
 
 @staff_member_required	
 def unsettleEvent(request, idEvent):
@@ -355,7 +343,9 @@ def showEvent(request, idEvent, page=1):
 	nbMarkets=Market.objects.filter(event=event).aggregate(Count('outcome'))['outcome__count']
 	settled=(event.status==1)
 	eventData=[]
+	urlist=[]
 	for market in markets:
+		urlist.append(searchNews(str(market.outcome)))
 		cursor.execute("SELECT price price, volume volume, side side, timestamp timestamp FROM markets_trade WHERE not nullTrade and market_id=%i ORDER BY timestamp DESC" % market.id)
 		trades = dictfetchall(cursor)
 		trades=trades[:20]

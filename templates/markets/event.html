@@ -40,24 +40,34 @@
 	<div id="{{ market.id }}" style="width:300px;height:200px"></div>		
 	</div>	
   {% endfor %}
+	<div class="pagination">
+		<span class="step-links">
+		   {% if minis.has_previous %}
+			   <a href="{% url 'eventList' gEvent.id minis.previous_page_number %}">Précédente</a> -
+		   {% endif %}
+	 
+		   <span class="current">
+			   Page {{ minis.number }} sur {{ minis.paginator.num_pages }}
+		   </span>
+	 
+		   {% if minis.has_next %}
+			   - <a href="{% url 'eventList' gEvent.id minis.next_page_number %}">Suivante</a>
+		   {% endif %}
+		</span>
+	</div>
   </div>
+	</br></br>
 
-<div class="pagination">
-    <span class="step-links">
-       {% if minis.has_previous %}
-           <a href="{% url 'eventList' gEvent.id minis.previous_page_number %}">Précédente</a> -
-       {% endif %}
- 
-       <span class="current">
-           Page {{ minis.number }} sur {{ minis.paginator.num_pages }}
-       </span>
- 
-       {% if minis.has_next %}
-           - <a href="{% url 'eventList' gEvent.id minis.next_page_number %}">Suivante</a>
-       {% endif %}
-    </span>
-</div>
-
+  <div id="recentNews">
+	  <div id="divHead">
+	  Recent news
+	  </div>
+  {% for urls in urlist %}
+  {% for myurl in urls %}
+      <a href="{{ myurl }}">{{ myurl }}</a></br>
+  {% endfor %}
+  {% endfor %}
+  </div>
   </tr>
 </table>
 

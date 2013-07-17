@@ -32,6 +32,4 @@ urlpatterns = patterns('markets.views',
 	url(r'^contact/$', 'contact', name='contact'),
 	url(r'^help/$', 'help'),
 	url(r'^about/$', 'about'),
-	url(r'^test/$', 'quiz', name='quiz'),
-	url(r'^test/(?P<fact_id>\d+)/$', 'quizguess', name='quizguess'),
 )
