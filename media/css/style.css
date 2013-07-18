@@ -177,16 +177,15 @@ section #recentNews{
 }
 section #news:hover{
 background: white;
-background-image:linear-gradient(rgb(255,255,255), rgb(245,245,245));
+background:#ACF;
 }
 section #news{
 margin-left:-20;
 margin-right:-20;
-margin-bottom:-20;
 padding-left: 20;
 padding-right: 20;
 padding-bottom: 10;
-background-image:linear-gradient(rgb(245,245,245), rgb(230,230,230));
+background-image:linear-gradient(rgb(225,225,225), rgb(255,255,255));
 }
 section #eventsGE{
   color: black;
