@@ -164,9 +164,29 @@ section #descrEvent{
   padding: 20;
 }
 section #recentNews{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+  margin-right: 40;
+  margin-bottom: 40;
+  padding: 20;
+  width:400;
   color: black;
   background-color: rgba(245,245,245,1);
-  padding: 20;
+  padding-bottom:0;
+}
+section #news:hover{
+background: white;
+background-image:linear-gradient(rgb(255,255,255), rgb(245,245,245));
+}
+section #news{
+margin-left:-20;
+margin-right:-20;
+margin-bottom:-20;
+padding-left: 20;
+padding-right: 20;
+padding-bottom: 10;
+background-image:linear-gradient(rgb(245,245,245), rgb(230,230,230));
 }
 section #eventsGE{
   color: black;
@@ -174,6 +194,9 @@ section #eventsGE{
   padding: 20;
 }
 section #graphsEvent{
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
   color: black;
   background-color: rgba(245,245,245,1);
   padding: 20;
@@ -234,6 +257,9 @@ a {
 
 a:hover {
   color: #3399CC;
+}
+section #recentNews a:hover, a:link, a:visited{
+color: black;
 }
 
 .fieldWrapper {

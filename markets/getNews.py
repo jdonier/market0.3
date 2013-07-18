@@ -33,24 +33,39 @@ def list_urls(searchterm,newservers):
 	txheaders['Keep-Alive']='300'
 	txheaders['Connection']='keep-alive'
 	txheaders['Cache-Control']='max-age=0'
-	#url = 'http://news.google.com/news?as_q='+searchterm+'&svnum=10&as_scoring=d&hl=en&ned=&btnG=Google+Search&as_epq=&as_oq=&as_eq=&as_nsrc='+source+'&as_nloc=&as_occt=any&as_drrb=q&as_qdr=d&as_mind=29&as_minm=3&as_maxd=28&as_maxm=4'
-	url='https://www.google.com/search?hl=en&gl=us&tbm=nws&authuser=0&q='+searchterm+'&oq='+searchterm+'&gs_l=news-cc.3.0.43j0j43i53.16455.24274.0.26206.13.4.3.6.8.0.75.283.4.4.0...0.0...1ac.1.5xkwBVolcU8'
-	req = urllib2.Request(url, txdata, txheaders)
-#    req = urllib2.Request(url)#, tdata, theaders)
-	u = urllib2.urlopen(req)
-#    headers = u.info()
-#    print headers
-	data = u.read()
-	u.close()
-	parser = URLLister()
-	parser.feed(data)
-	parser.close()
 	urlist=[]
-	for url in parser.urls:
-		for newserver in newservers:
-			if string.find(url,newserver)>=0:
-				if string.find(url,"news.google.com")<0:
-					urlist.append(url[7:url.index('&')])
+	titlelist=[]
+	for i in range(0,1):
+		n=str(10*i)
+		print n
+		url='https://www.google.com/search?hl=en&gl=us&tbm=nws&start='+n+'&authuser=0&q='+searchterm
+		#url='https://www.google.com/search?hl=en&gl=us&tbm=nws&authuser=0&q='+searchterm
+		print url
+		req = urllib2.Request(url, txdata, txheaders)
+	#    req = urllib2.Request(url)#, tdata, theaders)
+		u = urllib2.urlopen(req)
+	#    headers = u.info()
+	#    print headers
+		data = u.read()
+		u.close()
+		parser = URLLister()
+		parser.feed(data)
+		parser.close()
+		for url in parser.urls:
+			for newserver in newservers:
+				if string.find(url,newserver)>=0:
+					if string.find(url,"news.google.com")<0:
+						url=url[7:url.index('&')]
+						print url
+						title=data[data.index(url):]
+						title=title[title.index('>')+1:]
+						title=title[:title.index('</a>')]
+						#htmlCodes = (("'", '&#39;'),('"', '&quot;'),('>', '&gt;'),('<', '&lt;'),('&', '&amp;'))
+						#for code in htmlCodes:
+						#	title= title.replace(code[1], code[0])
+						title=title.replace('<b>','')
+						title=title.replace('</b>','')
+						urlist.append({'url':url, 'title':title})
 	return urlist
 
 def searchNews(swd):
@@ -80,5 +95,5 @@ def searchNews(swd):
 	searchwords=[]
 	searchwords.append(swd)
 	for searchword in searchwords:
-		urlist=list_urls(searchword,['usatoday.com', 'foxnews.com','reuters.com','bloomberg.com'])
+		urlist=list_urls(searchword,['usatoday.com', 'foxnews.com','nbcnews.com','reuters.com','bloomberg.com'])
 		return urlist

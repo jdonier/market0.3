@@ -6,6 +6,9 @@
       <h1>
         {{ event.title }} 
       </h1>
+	  
+
+  
 	<div id="descrEvent">
 	  <div id="divHead">
 	  Event description
@@ -27,6 +30,23 @@
 	{% endif %}
 	</div>
 	</br></br>
+	
+	<div id="recentNews">
+	  <div id="divHead">
+	  Recent news
+	  </div>
+	  {{ context_var|safe }}
+	{% autoescape off %}
+	  {% for urls in urlist %}
+	  {% for myurl in urls %}
+	  
+		  <a href="{{ myurl.url }}"><div id="news">{{ myurl.title }}</div></a></br>
+	  	  
+	  {% endfor %}
+	  {% endfor %}
+	{% endautoescape %}
+  </div>
+	
 	<div id="graphsEvent">
 	  <div id="divHead">
 	  Markets
@@ -58,16 +78,7 @@
   </div>
 	</br></br>
 
-  <div id="recentNews">
-	  <div id="divHead">
-	  Recent news
-	  </div>
-  {% for urls in urlist %}
-  {% for myurl in urls %}
-      <a href="{{ myurl }}">{{ myurl }}</a></br>
-  {% endfor %}
-  {% endfor %}
-  </div>
+  
   </tr>
 </table>
 
